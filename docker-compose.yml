@@ -1,0 +1,53 @@
+version: '3'
+
+
+x-healthcheck: &healthcheck
+  interval: 10s
+  timeout: 20s
+  retries: 15
+
+x-networks: &networks
+  networks:
+    - databases-net
+
+
+
+services:
+
+  jupyter:
+    build: ./docker/python
+    container_name: python_jupyter
+    ports: 
+      - "8888:8888"
+    environment: 
+      - JUPYTER_ENABLE_LAB=yes
+    volumes:
+      - ./mnt/jupyter_python:/app
+    <<: *networks
+
+
+  postgres:
+    build: ./docker/postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: postgres
+    <<: *networks
+    volumes:
+      - ./mnt/postgres/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      <<: *healthcheck
+  
+
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+    <<: *networks
+    volumes:
+      - ./mnt/mongo/data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      <<: *healthcheck

@@ -1,0 +1,16 @@
+jupyterlab
+numpy
+pyarrow
+pandas
+matplotlib
+seaborn
+graphviz
+scikit-learn
+scikit-optimize
+tensorflow
+torch
+opencv-python
+mediapipe
+yellowbrick
+mlxtend
+openpyxl
