@@ -8,14 +8,14 @@ x-healthcheck: &healthcheck
 
 x-networks: &networks
   networks:
-    - databases-net
+    - AI-net
 
 
 
 services:
 
   jupyter:
-    build: ./docker/python
+    build: ./docker/jupyter
     container_name: python_jupyter
     ports: 
       - "8888:8888"
@@ -31,6 +31,8 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
+    ports:
+      - "15432:5432"
     <<: *networks
     volumes:
       - ./mnt/postgres/data:/var/lib/postgresql/data
@@ -45,9 +47,16 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongo
       MONGO_INITDB_ROOT_PASSWORD: mongo
+    ports:
+      - "27017:27017"
+
     <<: *networks
     volumes:
       - ./mnt/mongo/data:/data/db
     healthcheck:
       test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
       <<: *healthcheck
+
+networks:
+  AI-net:
+    driver: bridge

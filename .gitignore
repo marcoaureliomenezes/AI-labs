@@ -1,1 +1,6 @@
 venv
+mnt
+datasets
+**.png
+**.pdf
+**.pkl
